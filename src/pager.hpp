@@ -6,7 +6,7 @@
 
 using namespace std;
 
-extern uint32_t page_size;
+uint32_t page_size = 400;
 
 /*
 ** Free_Page_List is a linked list storing page numbers of all.
@@ -53,5 +53,16 @@ struct Pager
 
         page_index[page_num] = page_list.size();
         page_list.emplace_back(buffer);
+    }
+
+    void close()
+    {
+        fstream file("mydb.db", ios::in|ios::out);
+        for (auto &[page_num,page_idx] : page_index)
+        {
+            file.seekp(page_num * page_size);
+            file.write(page_list[page_idx], page_size);
+        }
+        file.close();
     }
 };
